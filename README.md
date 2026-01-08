@@ -55,25 +55,12 @@ cp -r src/* .opencode/plugin/
 
 ## How it works
 
-The plugin hooks into OpenCode's tool execution:
-
-### `tool.execute.before`
-
-Scans tool arguments before execution for these high-risk tools:
-- `write`: Scans the `content` being written
-- `edit`: Scans the `newString` replacement
-- `bash`: Scans the `command` being executed
-
-If a secret is detected, the tool execution is **blocked** with an error.
-
-### `tool.execute.after`
-
-Scans tool output after execution for these tools:
+The plugin hooks into OpenCode's tool execution via `tool.execute.after`, scanning tool output for these tools:
 - `read`: Scans file contents
 - `bash`: Scans command output
 - `grep`: Scans search results
 
-If a secret is detected, the output is **replaced** with a warning message.
+If a secret is detected in the output, it is **replaced** with a warning message to prevent the secret from entering the AI's context.
 
 ## Configuration
 
@@ -81,9 +68,6 @@ The plugin can be configured through the plugin context. Default settings:
 
 ```typescript
 {
-  // Tools to scan before execution
-  scanToolsBefore: ["write", "edit", "bash"],
-
   // Tools to scan after execution
   scanToolsAfter: ["read", "bash", "grep"],
 

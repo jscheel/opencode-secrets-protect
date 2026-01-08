@@ -10,12 +10,6 @@ import { detectSecrets, type DetectorOptions } from "./detector.ts";
 
 export interface SecretProtectConfig extends DetectorOptions {
   /**
-   * Tools to scan for secrets in their arguments (before execution)
-   * @default ["write", "edit", "bash"]
-   */
-  scanToolsBefore?: string[];
-
-  /**
    * Tools to scan for secrets in their output (after execution)
    * @default ["read", "bash", "grep"]
    */
@@ -29,7 +23,6 @@ export interface SecretProtectConfig extends DetectorOptions {
 }
 
 const DEFAULT_CONFIG: Required<SecretProtectConfig> = {
-  scanToolsBefore: ["write", "edit", "bash"],
   scanToolsAfter: ["read", "bash", "grep"],
   enabled: true,
   entropyThreshold: 4.5,
@@ -46,42 +39,6 @@ If this is a false positive, you can:
 2. Adjust the 'entropyThreshold' setting (higher = fewer false positives)
 3. Disable entropy detection with 'enableEntropyDetection: false'`;
 
-function getContentToScanBefore(
-  tool: string,
-  args: Record<string, unknown>
-): string[] {
-  const contents: string[] = [];
-
-  switch (tool) {
-    case "write":
-      if (typeof args.content === "string") {
-        contents.push(args.content);
-      }
-      break;
-
-    case "edit":
-      if (typeof args.newString === "string") {
-        contents.push(args.newString);
-      }
-      break;
-
-    case "bash":
-      if (typeof args.command === "string") {
-        contents.push(args.command);
-      }
-      break;
-
-    default:
-      for (const value of Object.values(args)) {
-        if (typeof value === "string") {
-          contents.push(value);
-        }
-      }
-  }
-
-  return contents;
-}
-
 function extractStringsFromOutput(output: string): string[] {
   return [output];
 }
@@ -96,32 +53,6 @@ const SecretProtectPlugin: Plugin = async (_ctx) => {
   }
 
   return {
-    // Scan BEFORE execution to prevent the AI from writing secrets to files or
-    // exfiltrating them via bash commands. Throwing here blocks the tool entirely.
-    "tool.execute.before": async (input, output) => {
-      const { tool } = input;
-
-      if (!config.scanToolsBefore.includes(tool)) {
-        return;
-      }
-
-      const contents = getContentToScanBefore(tool, output.args);
-
-      for (const content of contents) {
-        const detection = detectSecrets(content, {
-          entropyThreshold: config.entropyThreshold,
-          enableEntropyDetection: config.enableEntropyDetection,
-          allowPatterns: config.allowPatterns,
-        });
-
-        if (detection.found) {
-          throw new Error(
-            `${SECRET_DETECTED_WARNING}\n\nDetected: ${detection.secretType}\nPattern: ${detection.matchedPattern}`
-          );
-        }
-      }
-    },
-
     // Scan AFTER execution to prevent secrets from being returned to the AI context.
     // We overwrite the output rather than throw since the tool already executed.
     "tool.execute.after": async (input, output) => {
