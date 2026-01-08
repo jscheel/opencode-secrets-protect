@@ -1,0 +1,39 @@
+{
+  "name": "opencode-secret-protect",
+  "version": "0.1.0",
+  "description": "OpenCode plugin to protect against secret leakage in AI tool calls",
+  "module": "src/index.ts",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jscheel/opencode-secret-protect.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jscheel/opencode-secret-protect/issues"
+  },
+  "homepage": "https://github.com/jscheel/opencode-secret-protect#readme",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "opencode",
+    "plugin",
+    "security",
+    "secrets",
+    "leak-detection"
+  ],
+  "author": "Jared A. Scheel",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bun": "^1.3.5",
+    "@opencode-ai/plugin": "^1.1.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

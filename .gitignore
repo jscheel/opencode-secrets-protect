@@ -1,0 +1,17 @@
+# dependencies
+node_modules
+
+# bun debug
+bun.report
+
+# env
+.env
+.env.*
+!.env.example
+
+# editor
+.idea
+.vscode
+
+# os
+.DS_Store
