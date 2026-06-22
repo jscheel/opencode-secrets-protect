@@ -1,4 +1,4 @@
-# opencode-secret-protect
+# opencode-secrets-protect
 
 > **Warning**
 > This project is in **alpha** and has not been extensively tested in real-world environments. Use at your own risk and please report any issues you encounter.
@@ -41,7 +41,7 @@ Add to your `opencode.json`:
 
 ```json
 {
-  "plugin": ["opencode-secret-protect"]
+  "plugin": ["opencode-secrets-protect"]
 }
 ```
 
