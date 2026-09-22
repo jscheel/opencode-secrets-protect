@@ -35,16 +35,6 @@ An OpenCode plugin that protects against secret leakage in AI tool calls.
 
 ## Installation
 
-### From npm (recommended)
-
-Add to your `opencode.json`:
-
-```json
-{
-  "plugin": ["opencode-secrets-protect"]
-}
-```
-
 ### Local plugin
 
 Copy the plugin source to `.opencode/plugin/` in your project:
